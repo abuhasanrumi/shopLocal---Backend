@@ -1,6 +1,7 @@
 const User = require("../models/userModel")
 const asyncHandler = require("express-async-handler")
 const { generateToken } = require("../config/jwtToken")
+const validateMongoDbId = require("../utils/validateMongoDbId")
 
 // register a user
 const createUser = asyncHandler(async (req, res) => {
@@ -37,6 +38,7 @@ const loginUserCtrl = asyncHandler(async (req, res) => {
 // update a user
 const updateAnUser = asyncHandler(async (req, res) => {
     const { _id } = req.user
+    validateMongoDbId(_id)
     try {
         const updatedUser = await User.findByIdAndUpdate(
             _id, {
@@ -67,6 +69,7 @@ const getallUser = asyncHandler(async (req, res) => {
 // get a single user 
 const getaSingleUser = asyncHandler(async (req, res) => {
     const { id } = req.params;
+    validateMongoDbId(id)
     try {
         const getaSingleUser = await User.findById(id)
         res.json({
@@ -80,6 +83,7 @@ const getaSingleUser = asyncHandler(async (req, res) => {
 // delete a single user 
 const deleteAnSingleUser = asyncHandler(async (req, res) => {
     const { id } = req.params;
+    validateMongoDbId(id)
     try {
         const deleteAnSingleUser = await User.findByIdAndDelete(id)
         res.json({
@@ -90,4 +94,44 @@ const deleteAnSingleUser = asyncHandler(async (req, res) => {
     }
 })
 
-module.exports = { createUser, loginUserCtrl, getallUser, getaSingleUser, deleteAnSingleUser, updateAnUser }
+// block user
+const blockUser = asyncHandler(async (req, res) => {
+    const { id } = req.params
+    validateMongoDbId(id)
+    try {
+        const block = User.findByIdAndUpdate(
+            id, {
+            isBlocked: true
+        }, {
+            new: true
+        }
+        )
+        res.json({
+            message: "User Blocked"
+        })
+    } catch (error) {
+        throw new Error(error)
+    }
+})
+
+//unblock user
+const unblockUser = asyncHandler(async (req, res) => {
+    const { id } = req.params
+    validateMongoDbId(id)
+    try {
+        const unblock = User.findByIdAndUpdate(
+            id, {
+            isBlocked: false
+        }, {
+            new: true
+        }
+        )
+        res.json({
+            message: "User Unblocked"
+        })
+    } catch (error) {
+        throw new Error(error)
+    }
+})
+
+module.exports = { createUser, loginUserCtrl, getallUser, getaSingleUser, deleteAnSingleUser, updateAnUser, blockUser, unblockUser }
