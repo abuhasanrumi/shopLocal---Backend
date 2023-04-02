@@ -21,6 +21,10 @@ var productSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
+    quantity: {
+        type: Number,
+        required: true
+    },
     category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Category"
@@ -28,9 +32,6 @@ var productSchema = new mongoose.Schema({
     brand: {
         type: String,
         enum: ["Apple", "Samsung", "Lenovo"]
-    },
-    quantity: {
-        type: Number
     },
     sold: {
         type: Number,
