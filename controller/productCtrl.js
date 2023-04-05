@@ -2,6 +2,7 @@ const Product = require("../models/productModel")
 const asyncHandler = require("express-async-handler")
 const productModel = require("../models/productModel")
 const slugify = require("slugify")
+const { query } = require("express")
 
 // Creating product
 const createProduct = asyncHandler(async (req, res) => {
@@ -59,8 +60,36 @@ const getAProduct = asyncHandler(async (req, res) => {
 // get all products
 const getAllProduct = asyncHandler(async (req, res) => {
     try {
-        const getAllProducts = await Product.find()
-        res.json(getAllProducts)
+        // filtering
+        const queryObj = { ...req.query }
+        const excludeFields = ['page', 'sort', 'limit', 'fields']
+        excludeFields.forEach((element) => delete queryObj[element])
+
+        // filtering for variable values
+        let queryStr = JSON.stringify(queryObj)
+        queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`)
+        let query = Product.find(JSON.parse(queryStr))
+
+        // sorting 
+        if (req.query.sort) {
+            const sortBy = req.query.sort.split(',').join(" ")
+            query = query.sort(sortBy)
+        } else {
+            query = query.sort('-createdAt')
+        }
+
+        // limiting the fields
+        if (req.query.fields) {
+            const fields = req.query.fields.split(',').join(" ")
+            query = query.select(fields)
+        } else {
+            query = query.select("-__v")
+        }
+
+        // pagination
+
+        const product = await query
+        res.json(product)
     } catch (error) {
         throw new Error(error)
     }
