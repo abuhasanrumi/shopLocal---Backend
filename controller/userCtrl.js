@@ -194,4 +194,20 @@ const unblockUser = asyncHandler(async (req, res) => {
     }
 })
 
-module.exports = { createUser, loginUserCtrl, getallUser, getaSingleUser, deleteAnSingleUser, updateAnUser, blockUser, unblockUser, handleRefreshToken, logout }
+// update password
+const updatePassword = asyncHandler(async (req, res) => {
+    const id = req.user._id.toHexString()
+    const { password } = req.body // Extract password value from req.body
+    validateMongoDbId(id)
+    const user = await User.findById(id)
+    if (password) {
+        user.password = password
+        const updatedUser = await user.save()
+        res.json(updatedUser)
+    } else {
+        res.json(user)
+    }
+})
+
+
+module.exports = { createUser, loginUserCtrl, getallUser, getaSingleUser, deleteAnSingleUser, updateAnUser, blockUser, unblockUser, handleRefreshToken, logout, updatePassword }
