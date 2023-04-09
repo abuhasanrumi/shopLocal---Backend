@@ -53,6 +53,12 @@ var productSchema = new mongoose.Schema({
                 ref: "User"
             }
         }
+    ],
+    wishlist: [
+        { type: mongoose.Schema.Types.ObjectId, ref: "Product" }
+    ],
+    address: [
+        { type: mongoose.Schema.Types.ObjectId, ref: "Address" }
     ]
 }, {
     timestamps: true
