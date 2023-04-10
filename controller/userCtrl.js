@@ -147,6 +147,23 @@ const updateAnUser = asyncHandler(async (req, res) => {
     }
 })
 
+// save user address 
+const saveAddress = asyncHandler(async (req, res) => {
+    const { _id } = req.user
+    validateMongoDbId(_id)
+    try {
+        const updatedUser = await User.findByIdAndUpdate(
+            _id, {
+            address: req?.body?.address,
+        }, {
+            new: true
+        }
+        )
+        res.json(updatedUser)
+    } catch (error) {
+        throw new Error(error)
+    }
+})
 
 // get all users 
 const getallUser = asyncHandler(async (req, res) => {
@@ -284,5 +301,16 @@ const resetPassword = asyncHandler(async (req, res) => {
     res.json(user)
 })
 
+// get wishlist of user
+const getWishlist = asyncHandler(async (req, res) => {
+    const { _id } = req.user
+    try {
+        const findUser = await User.findById(_id).populate("wishlist")
+        res.json(findUser)
+    } catch (error) {
+        throw new Error(error)
+    }
+})
 
-module.exports = { createUser, loginUserCtrl, getallUser, getaSingleUser, deleteAnSingleUser, updateAnUser, blockUser, unblockUser, handleRefreshToken, logout, updatePassword, fotgotPasswordToken, resetPassword, loginAdmin }
+
+module.exports = { createUser, loginUserCtrl, getallUser, getaSingleUser, deleteAnSingleUser, updateAnUser, blockUser, unblockUser, handleRefreshToken, logout, updatePassword, fotgotPasswordToken, resetPassword, loginAdmin, getWishlist, saveAddress }
