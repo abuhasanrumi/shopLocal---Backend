@@ -1,4 +1,6 @@
 const User = require("../models/userModel")
+const Product = require("../models/productModel")
+const Cart = require("../models/cartModel")
 const asyncHandler = require("express-async-handler")
 const { generateToken } = require("../config/jwtToken")
 const validateMongoDbId = require("../utils/validateMongoDbId")
@@ -312,5 +314,9 @@ const getWishlist = asyncHandler(async (req, res) => {
     }
 })
 
+// user cart functionality 
+const userCart = asyncHandler(async (req, res) => {
+    res.send("hello")
+})
 
-module.exports = { createUser, loginUserCtrl, getallUser, getaSingleUser, deleteAnSingleUser, updateAnUser, blockUser, unblockUser, handleRefreshToken, logout, updatePassword, fotgotPasswordToken, resetPassword, loginAdmin, getWishlist, saveAddress }
+module.exports = { createUser, loginUserCtrl, getallUser, getaSingleUser, deleteAnSingleUser, updateAnUser, blockUser, unblockUser, handleRefreshToken, logout, updatePassword, fotgotPasswordToken, resetPassword, loginAdmin, getWishlist, saveAddress, userCart }
