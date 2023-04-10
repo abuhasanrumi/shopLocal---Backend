@@ -38,14 +38,11 @@ var blogSchema = new mongoose.Schema({
             ref: "User"
         }
     ],
-    image: {
-        type: String,
-        default: "https://brid.tv/wp-content/uploads/2021/03/01-3.jpg"
-    },
     author: {
         type: String,
         default: "Admin"
-    }
+    },
+    images: []
 },
     {
         toJSON: {
