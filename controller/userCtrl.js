@@ -50,6 +50,36 @@ const loginUserCtrl = asyncHandler(async (req, res) => {
     }
 })
 
+// admin login 
+const loginAdmin = asyncHandler(async (req, res) => {
+    const { email, password } = req.body
+    // checking if the user already exists
+    const findAdmin = await User.findOne({ email })
+    if (findAdmin.role !== "admin") throw new Error("Not Authorized")
+    if (findAdmin && (await findAdmin.isPasswordMatched(password))) {
+        const refreshToken = await generateRefreshToken(findAdmin?._id)
+        const updateUser = await User.findByIdAndUpdate(
+            findAdmin.id, {
+            refreshToken: refreshToken,
+        },
+            { new: true }
+        )
+        res.cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            maxAge: 72 * 60 * 60 * 1000
+        })
+        res.json({
+            _id: findAdmin?._id,
+            firstName: findAdmin?.firstName,
+            lastName: findAdmin?.lastName,
+            email: findAdmin?.email,
+            token: generateToken(findAdmin?._id)
+        })
+    } else {
+        throw new Error("Invalid username or password")
+    }
+})
+
 // handle refresh token
 const handleRefreshToken = asyncHandler(async (req, res) => {
     const cookie = req.cookies
@@ -255,4 +285,4 @@ const resetPassword = asyncHandler(async (req, res) => {
 })
 
 
-module.exports = { createUser, loginUserCtrl, getallUser, getaSingleUser, deleteAnSingleUser, updateAnUser, blockUser, unblockUser, handleRefreshToken, logout, updatePassword, fotgotPasswordToken, resetPassword }
+module.exports = { createUser, loginUserCtrl, getallUser, getaSingleUser, deleteAnSingleUser, updateAnUser, blockUser, unblockUser, handleRefreshToken, logout, updatePassword, fotgotPasswordToken, resetPassword, loginAdmin }
