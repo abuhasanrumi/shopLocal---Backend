@@ -1,12 +1,12 @@
 const express = require("express");
-const { createUser, loginUserCtrl, getallUser, getaSingleUser, deleteAnSingleUser, updateAnUser, blockUser, unblockUser, handleRefreshToken, logout, updatePassword, fotgotPasswordToken, resetPassword, loginAdmin, getWishlist, saveAddress, userCart } = require("../controller/userCtrl");
+const { createUser, loginUserCtrl, getallUser, getaSingleUser, deleteAnSingleUser, updateAnUser, blockUser, unblockUser, handleRefreshToken, logout, updatePassword, fotgotPasswordToken, resetPassword, loginAdmin, getWishlist, saveAddress, userCart, getUserCart } = require("../controller/userCtrl");
 const { authMiddleware, isAdmin } = require("../middlewares/authMiddleware");
 const router = express.Router()
 
 router.post("/register", createUser)
 router.post("/login", loginUserCtrl)
 router.post("/admin-login", loginAdmin)
-router.post("/cart", userCart)
+router.post("/cart", authMiddleware, userCart)
 
 router.put("/update-password", authMiddleware, updatePassword)
 router.post("/forgot-password-token", fotgotPasswordToken)
@@ -14,6 +14,9 @@ router.put("/reset-password/:token", resetPassword)
 router.get("/all-users", getallUser)
 router.get("/refresh", handleRefreshToken)
 router.get("/wishlist", authMiddleware, getWishlist)
+router.get("/cart", authMiddleware, getUserCart)
+
+
 router.get("/logout", logout)
 router.get("/:id", authMiddleware, isAdmin, getaSingleUser)
 router.delete("/:id", deleteAnSingleUser)
