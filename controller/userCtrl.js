@@ -363,4 +363,18 @@ const getUserCart = asyncHandler(async (req, res) => {
     }
 })
 
-module.exports = { createUser, loginUserCtrl, getallUser, getaSingleUser, deleteAnSingleUser, updateAnUser, blockUser, unblockUser, handleRefreshToken, logout, updatePassword, fotgotPasswordToken, resetPassword, loginAdmin, getWishlist, saveAddress, userCart, getUserCart }
+// empty cart
+const emptyCart = asyncHandler(async (req, res) => {
+    const { _id } = req.user
+    validateMongoDbId(_id)
+    try {
+        const user = await User.findOne({ _id })
+        const cart = await Cart.findOneAndRemove({ orderby: user._id })
+        res.json(cart)
+    } catch (error) {
+        throw new Error(error)
+    }
+})
+
+
+module.exports = { createUser, loginUserCtrl, getallUser, getaSingleUser, deleteAnSingleUser, updateAnUser, blockUser, unblockUser, handleRefreshToken, logout, updatePassword, fotgotPasswordToken, resetPassword, loginAdmin, getWishlist, saveAddress, userCart, getUserCart, emptyCart }
