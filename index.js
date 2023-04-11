@@ -13,6 +13,7 @@ const blogCategoryRouter = require("./routes/blogCategoryRoute");
 const brandRouter = require("./routes/brandRoute");
 const couponRouter = require("./routes/couponRoute");
 const colorRouter = require("./routes/colorRoute");
+const enqRouter = require("./routes/enqRoute");
 const morgan = require("morgan")
 
 const PORT = process.env.PORT || 4000;
@@ -32,6 +33,7 @@ app.use("/api/blog-category", blogCategoryRouter)
 app.use("/api/brand", brandRouter)
 app.use("/api/coupon", couponRouter)
 app.use("/api/color", colorRouter)
+app.use("/api/enquiry", enqRouter)
 
 app.use(notFound)
 app.use(errorHandler)
