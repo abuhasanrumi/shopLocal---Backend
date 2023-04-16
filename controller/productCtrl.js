@@ -5,7 +5,7 @@ const productModel = require("../models/productModel")
 const slugify = require("slugify")
 const { query } = require("express")
 const validateMongoDbId = require("../utils/validateMongoDbId")
-const { cloudinaryUploadImg, cloudinaryDeleteImg } = require("../utils/cloudinary")
+const { cloudinaryUploadImg } = require("../utils/cloudinary")
 const fs = require('fs')
 
 
@@ -60,12 +60,13 @@ const getAProduct = asyncHandler(async (req, res) => {
     validateMongoDbId(id)
 
     try {
-        const findProduct = await productModel.findById(id)
-        res.json(findProduct)
+        const findProduct = await await Product.findById(id).populate("color", "title")
+        res.json(product)
     } catch (error) {
         throw new Error(error)
     }
 })
+
 
 // get all products
 const getAllProduct = asyncHandler(async (req, res) => {
@@ -78,7 +79,7 @@ const getAllProduct = asyncHandler(async (req, res) => {
         // filtering for variable values
         let queryStr = JSON.stringify(queryObj)
         queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`)
-        let query = Product.find(JSON.parse(queryStr))
+        let query = Product.find(JSON.parse(queryStr)).populate('color', 'title');
 
         // sorting 
         if (req.query.sort) {
@@ -114,7 +115,6 @@ const getAllProduct = asyncHandler(async (req, res) => {
         throw new Error(error)
     }
 })
-
 // add to wishlist 
 const addToWishlist = asyncHandler(async (req, res) => {
     const { _id } = req.user

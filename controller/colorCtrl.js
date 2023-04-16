@@ -50,7 +50,7 @@ const getColor = asyncHandler(async (req, res) => {
     }
 })
 
-// get a color
+// get all color
 const getAllColor = asyncHandler(async (req, res) => {
     try {
         const getColor = await Color.find()
