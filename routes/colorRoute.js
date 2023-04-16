@@ -6,7 +6,7 @@ const router = express.Router()
 router.post("/", authMiddleware, isAdmin, createColor)
 router.put("/:id", authMiddleware, isAdmin, updateColor)
 router.delete("/:id", authMiddleware, isAdmin, deleteColor)
-router.get("/:id", authMiddleware, getColor)
-router.get("/", authMiddleware, getAllColor)
+router.get("/:id", getColor)
+router.get("/", getAllColor)
 
 module.exports = router
