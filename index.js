@@ -15,12 +15,14 @@ const couponRouter = require("./routes/couponRoute");
 const colorRouter = require("./routes/colorRoute");
 const enqRouter = require("./routes/enqRoute");
 const morgan = require("morgan")
+const cors = require('cors')
 
 const PORT = process.env.PORT || 4000;
 
 
 dbConnect()
 app.use(morgan("dev"))
+app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser())
