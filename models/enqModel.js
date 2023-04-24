@@ -24,6 +24,8 @@ var enqSchema = new mongoose.Schema({
         default: "Submitted",
         enum: ["Submitted", "Contacted", "In Progress"]
     }
+}, {
+    timestamps: true
 });
 
 //Export the model

@@ -6,7 +6,7 @@ const router = express.Router()
 router.post("/", authMiddleware, createEnquiry)
 router.put("/:id", authMiddleware, updateEnquiry)
 router.delete("/:id", authMiddleware, deleteEnquiry)
-router.get("/:id", authMiddleware, getEnquiry)
-router.get("/", authMiddleware, getAllEnquiry)
+router.get("/:id", getEnquiry)
+router.get("/", getAllEnquiry)
 
 module.exports = router
