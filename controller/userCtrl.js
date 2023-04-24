@@ -517,6 +517,19 @@ const getOrders = asyncHandler(async (req, res) => {
     }
 })
 
+// get all user orders
+const getAllOrders = asyncHandler(async (req, res) => {
+    try {
+        const allUserOrders = await Order.find()
+            .populate('products.product')
+            .populate('orderby')
+            .exec();
+        res.json(allUserOrders);
+    } catch (error) {
+        throw new Error(error);
+    }
+})
+
 // update order status 
 const updateOrderStatus = asyncHandler(async (req, res) => {
     const { status } = req.body
@@ -540,4 +553,4 @@ const updateOrderStatus = asyncHandler(async (req, res) => {
 })
 
 
-module.exports = { createUser, loginUserCtrl, getallUser, getaSingleUser, deleteAnSingleUser, updateAnUser, blockUser, unblockUser, handleRefreshToken, logout, updatePassword, fotgotPasswordToken, resetPassword, loginAdmin, getWishlist, saveAddress, userCart, getUserCart, emptyCart, applyCoupon, createOrder, getOrders, updateOrderStatus }
+module.exports = { createUser, loginUserCtrl, getallUser, getaSingleUser, deleteAnSingleUser, updateAnUser, blockUser, unblockUser, handleRefreshToken, logout, updatePassword, fotgotPasswordToken, resetPassword, loginAdmin, getWishlist, saveAddress, userCart, getUserCart, emptyCart, applyCoupon, createOrder, getOrders, updateOrderStatus, getAllOrders }
