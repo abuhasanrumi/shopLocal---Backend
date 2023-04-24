@@ -317,7 +317,56 @@ const getWishlist = asyncHandler(async (req, res) => {
     }
 })
 
-// user cart functionality 
+// add to cart functionality 
+// const userCart = asyncHandler(async (req, res) => {
+//     const { cart } = req.body;
+//     const { _id } = req.user;
+//     validateMongoDbId(_id);
+
+//     try {
+//         const user = await User.findById(_id);
+
+//         // check if the user already have product in cart
+//         let cartToUpdate = await Cart.findOne({ orderby: user._id });
+
+//         if (!cartToUpdate) {
+//             cartToUpdate = new Cart({ orderby: user._id });
+//         }
+
+//         // update the cart with the new products
+//         for (let i = 0; i < cart.length; i++) {
+//             const product = cart[i];
+//             const existingProduct = cartToUpdate.products.find(
+//                 (p) => p.product.toString() === product._id.toString()
+//             );
+
+//             if (existingProduct) {
+//                 existingProduct.count += product.count;
+//             } else {
+//                 let getPrice = await Product.findById(product._id).exec();
+//                 cartToUpdate.products.push({
+//                     product: product._id,
+//                     count: product.count,
+//                     color: product.color,
+//                     price: getPrice.price,
+//                 });
+//             }
+//         }
+
+//         cartToUpdate.cartTotal = cartToUpdate.products.reduce(
+//             (acc, p) => acc + p.price * p.count,
+//             0
+//         );
+
+//         await cartToUpdate.save();
+
+//         res.json(cartToUpdate);
+//     } catch (error) {
+//         throw new Error(error);
+//     }
+// });
+
+
 const userCart = asyncHandler(async (req, res) => {
     const { cart } = req.body
     const { _id } = req.user
@@ -329,6 +378,7 @@ const userCart = asyncHandler(async (req, res) => {
         // check if the user already have product in cart
         const alreadyExistsCart = await Cart.findOne({ orderby: user._id })
         if (alreadyExistsCart) {
+            console.log(alreadyExistsCart)
             alreadyExistsCart.remove()
         }
 
@@ -406,8 +456,10 @@ const createOrder = asyncHandler(async (req, res) => {
 
     try {
         if (!COD) throw new Error("Creating cash order failed miserably")
-        const user = await User.findById({ _id })
-        let userCart = await Cart.findOne({ orderby: user._id })
+        const user = await User.findById(_id)
+        console.log(user)
+        let userCart = await Cart.find({ orderby: user._id })
+        console.log(userCart)
         let finalAmount = 0
         if (couponApplied && userCart.totalAfterDiscount) {
             finalAmount = userCart.totalAfterDiscount
@@ -428,6 +480,10 @@ const createOrder = asyncHandler(async (req, res) => {
             orderStatus: "Cash on Delivery"
         }).save()
 
+        if (!newOrder) {
+            throw new Error("Failed to create order")
+        }
+
         // increasing amount of sold quantity and decreasing the amount of stock quantity 
         let update = userCart.products.map((item) => {
             return {
@@ -438,6 +494,7 @@ const createOrder = asyncHandler(async (req, res) => {
             }
         })
         const updated = await Product.bulkWrite(update, {})
+
         res.json({ message: "success" })
     } catch (error) {
         throw new Error(error)
@@ -450,10 +507,13 @@ const getOrders = asyncHandler(async (req, res) => {
     validateMongoDbId(_id)
 
     try {
-        const userOrders = await Order.findOne({ orderby: _id }).populate('products.product').exec()
-        res.json(userOrders)
+        const userOrders = await Order.find({ orderby: _id })
+            .populate('products.product')
+            .populate('orderby')
+            .exec();
+        res.json(userOrders);
     } catch (error) {
-        throw new Error(error)
+        throw new Error(error);
     }
 })
 
